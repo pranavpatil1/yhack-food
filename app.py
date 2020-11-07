@@ -22,11 +22,10 @@ def get_db_connection():
 
 def get_post(post_id):
     conn = get_db_connection()
-        # urllib.parse.quote('/', safe='')
-    post = conn.execute('SELECT * FROM rest WHERE name = ?',
-                        (post_id,)).fetchone()
+    id = urllib.parse.unquote(post_id)
+    query = "SELECT * FROM rest WHERE name = %s"
+    post = conn.execute(query, (id,)).fetchone()
     conn.close()
-
     if post is None:
         abort(404)
     return post
@@ -40,9 +39,14 @@ def eat():
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest LIMIT 5').fetchall()
     conn.close()
-    return render_template('eat.html', posts=posts)
+    posts_parsed = []
+    for row in posts:
+        d = dict(row.items())
+        d['id'] = urllib.parse.quote(d['name'], safe='')
+        posts_parsed.append(d)
+    return render_template('eat.html', posts=posts_parsed)
 
-@app.route('/restaurant/<string:post_id>')
+@app.route('/restaurant/<post_id>')
 def restaurant(post_id):
     post = get_post(post_id)
     return render_template('restaurant.html', post=post)

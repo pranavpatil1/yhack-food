@@ -3,7 +3,7 @@
 {% block content %}
     <h1>{% block title %} Welcome to big tasty eateries! {% endblock %}</h1>
     {% for post in posts %}
-        <a href="{{ url_for('restaurant', post_id=post['name']) }}">
+        <a href="{{ url_for('restaurant', post_id=post['id']) }}">
             <h2>{{ post['name'] }}</h2>
         </a>
         <span class="badge badge-primary">{{ post['menu'] }}</span>
