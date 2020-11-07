@@ -1,9 +1,11 @@
 h1 {
-    border: 2px #eee solid;
-    color: brown;
+    color: #bbf;
     text-align: center;
     padding: 10px;
+    margin: 0px;
+    background-color: white;
 }
 body {
-  background-color: #ddf;
+  background-color: #bbf;
+  margin: 0;
 }
