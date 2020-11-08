@@ -2,36 +2,52 @@
 <html lang="en">
   <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/owl-carousel/css/owl.carousel.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/owl-carousel/css/owl.theme.default.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/mdi/css/materialdesignicons.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/aos/css/aos.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.min.css') }}">
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">FlaskBlog</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">About</a>
-            </li>
-            </ul>
+    <header id="header-section">
+      <div class="nav-head navbar-expand-lg pl-3 pl-sm-0" id="navbar" style="padding: 20px 0 40px; background-color: #f9f9f9">
+      <div class="container">
+        <div class="navbar-brand-wrapper d-flex w-100" style="float: left">
+          <a href="/">
+            <h1>🍉 Watermelon</h1>
+          </a>
+          <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="mdi mdi-menu navbar-toggler-icon"></span>
+          </button>
         </div>
-    </nav>
+        <div class="collapse navbar-collapse navbar-menu-wrapper" id="navbarSupportedContent">
+          <ul class="navbar-nav align-items-lg-center align-items-start ml-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/eat">Eat</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/cook">Cook</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      </div>
+    </header>
     <div class="container">
         {% block content %} {% endblock %}
     </div>
 
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  </body>
+    <script src="{{ url_for('static', filename= 'vendors/jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'vendors/bootstrap/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'vendors/owl-carousel/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'vendors/aos/js/aos.js') }}"></script>
+    <script src="{{ url_for('static', filename= 'js/landingpage.js') }}"></script></body>
 </html>

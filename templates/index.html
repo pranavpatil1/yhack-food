@@ -1,53 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Watermelon 🍉</title>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/owl-carousel/css/owl.carousel.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/owl-carousel/css/owl.theme.default.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/mdi/css/materialdesignicons.min.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/aos/css/aos.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.min.css') }}">
-</head>
-<body id="body" data-spy="scroll" data-target=".navbar" data-offset="100">
-  <header id="header-section">
-    <nav class="navbar navbar-expand-lg pl-3 pl-sm-0" id="navbar">
-    <div class="container">
-      <div class="navbar-brand-wrapper d-flex w-100">
-        <h1>🍉 Watermelon</h1>
-        <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="mdi mdi-menu navbar-toggler-icon"></span>
-        </button>
-      </div>
-      <div class="collapse navbar-collapse navbar-menu-wrapper" id="navbarSupportedContent">
-        <ul class="navbar-nav align-items-lg-center align-items-start ml-auto">
-          <li class="d-flex align-items-center justify-content-between pl-4 pl-lg-0">
-            <div class="navbar-collapse-logo">
-              <h1>Watermelon</h1>
-            </div>
-            <button class="navbar-toggler close-button" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="mdi mdi-close navbar-toggler-icon pl-5"></span>
-            </button>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#header-section">Home <span class="sr-only">(current)</span></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#features-section">Eat</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#digital-marketing-section">Cook</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    </nav>
-  </header>
+{% extends 'base.html' %}
+
+{% block content %}
+
   <div class="banner" >
     <div class="container content-header">
-      <h1 class="font-weight-semibold">Hungry?<br></h1>
+      <h1 class="font-weight-semibold">{% block title %} Hungry? {% endblock %}<br></h1>
       <h5 class="section-subtitle text-muted">Watermelon helps pair people who want quality food at a lower price with chefs<br> who need work but don't have the money to setup shop.</h5>
       <div>
         <button class="btn btn-opacity-light mr-1">I'm a chef</button>
@@ -198,14 +155,4 @@
       </footer>
     </div>
   </div>
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-  <script src="{{ url_for('static', filename= 'vendors/jquery/jquery.min.js') }}"></script>
-  <script src="{{ url_for('static', filename= 'vendors/bootstrap/bootstrap.min.js') }}"></script>
-  <script src="{{ url_for('static', filename= 'vendors/owl-carousel/js/owl.carousel.min.js') }}"></script>
-  <script src="{{ url_for('static', filename= 'vendors/aos/js/aos.js') }}"></script>
-  <script src="{{ url_for('static', filename= 'js/landingpage.js') }}"></script>
-</body>
-</html>
+{% endblock %}
