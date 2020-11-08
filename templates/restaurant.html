@@ -1,7 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>{% block title %} {{ post['name'] }} {% endblock %}</h2>
-    <span class="badge badge-primary">{{ post['menu'] }}</span>
-    <p>{{ post['content'] }}</p>
+    <h1 style="color:red;">{% block title %} {{ post['name'] }} {% endblock %}</h1>
+        <h3>About Us!</h3>
+        <p>{{ post['des'] }}</p>
+        <h3>Order Now at:</h3>
+        <p>{{ post['phone'] }}</p>
+        <h3>Our Menu:</h3>
+        {% for item in menu %}
+            <b>{{ item }}</b>
+            <hr>
+        {% endfor %}
 {% endblock %}
