@@ -49,4 +49,8 @@ def eat():
 @app.route('/restaurant/<post_id>')
 def restaurant(post_id):
     post = get_post(post_id)
-    return render_template('restaurant.html', post=post)
+    menu_items = post['menu'].split(";")
+    for i in range(len(menu_items)):
+        split = menu_items[i].split(":")
+        menu_items[i] = split[0] + "    $" + split[1]
+    return render_template('restaurant.html', post=post, menu=menu_items)
