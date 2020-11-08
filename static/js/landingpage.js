@@ -3,13 +3,11 @@ window.onscroll = function() {scrollFunction()};
 var element = document.getElementById("body");
 function scrollFunction() {
   if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-      $(".navbar").addClass("fixed-top");
-      element.classList.add("header-small");
+      $(".nav-head").addClass("fixed-top");
       $("body").addClass("body-top-padding");
 
   } else {
-      $(".navbar").removeClass("fixed-top");
-      element.classList.remove("header-small");
+      $(".nav-head").removeClass("fixed-top");
       $("body").removeClass("body-top-padding");
   }
 }
@@ -45,7 +43,7 @@ $(document).ready(function() {
       }, {
           duration: 1000,
       });
-      $('body').scrollspy({ target: '.navbar',offset: $(t).offset().top });
+      $('body').scrollspy({ target: '.nav-head',offset: $(t).offset().top });
       return false;
   });
 
@@ -53,13 +51,13 @@ $(document).ready(function() {
 
 // AOS
 AOS.init({
-    offset: 120, 
+    offset: 120,
     delay: 0,
-    duration: 1200, 
-    easing: 'ease', 
-    once: true, 
-    mirror: false, 
-    anchorPlacement: 'top-bottom', 
+    duration: 1200,
+    easing: 'ease',
+    once: true,
+    mirror: false,
+    anchorPlacement: 'top-bottom',
     disable: "mobile"
   });
 
