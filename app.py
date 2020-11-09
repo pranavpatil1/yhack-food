@@ -81,11 +81,15 @@ def eat():
                 url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + loc_coords + "&destinations=" + d['address'] + "&mode=driving&language=en-EN&sensor=false&key=" + key
                 result= simplejson.load(urllib.request.urlopen(url))
                 d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
+                d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
+                
                 posts_parsed.append(d)
         # sort restaurants by distance to loc
         posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
+        coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
+        print (coords)
 
-        return render_template('eat.html', posts=posts_parsed, loc=loc)
+        return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest').fetchall()
     conn.close()
