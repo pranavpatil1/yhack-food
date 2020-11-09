@@ -3,10 +3,15 @@ from werkzeug.exceptions import abort
 import sqlalchemy
 import urllib
 from google.cloud import language_v1
+import simplejson, urllib, requests, geocoder
 import os
 import re
 
+
 app = Flask(__name__)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="yhack-d85d8882337a.json"
+os.environ["GOOGLE_API_KEY"] = "AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA"
+key = "AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA"
 
 def get_db_connection():
     username = 'postgres'  # DB username
@@ -58,6 +63,7 @@ def eat():
         posts = conn.execute('SELECT * FROM rest').fetchall()
         conn.close()
         posts_parsed = []
+        loc_coords = get_coords(loc)
         for row in posts:
             d = dict(row.items())
             d['id'] = urllib.parse.quote(d['name'], safe='')
@@ -67,8 +73,19 @@ def eat():
             
             # if address starts with a numbers then comma, don't include that part
             pattern = re.compile("^([0-9]+),")
-            d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
-            posts_parsed.append(d)
+            if d['address'] != None:
+                d['address'] = d['address'].replace(' ', '')
+                d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
+
+
+                url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + loc_coords + "&destinations=" + d['address'] + "&mode=driving&language=en-EN&sensor=false&key=" + key
+                result= simplejson.load(urllib.request.urlopen(url))
+                d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
+                posts_parsed.append(d)
+
+        # sort restaurants by distance to loc
+        posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
+
         return render_template('eat.html', posts=posts_parsed, loc=loc)
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest').fetchall()
@@ -85,6 +102,7 @@ def eat():
         pattern = re.compile("^([0-9]+),")
         d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
         posts_parsed.append(d)
+    
     return render_template('eat.html', posts=posts_parsed, loc=None)
 
 @app.route('/restaurant/<post_id>', methods=('GET', 'POST'))
@@ -143,7 +161,6 @@ def chef():
             return redirect(url_for('eat'))
     return render_template('chef.html')
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="yhack-d85d8882337a.json"
 def sample_analyze_sentiment(text_content):
     """
     Analyzing Sentiment in a String
@@ -171,3 +188,9 @@ def sample_analyze_sentiment(text_content):
     response = client.analyze_sentiment(request = {'document': document, 'encoding_type': encoding_type})
     # Get overall sentiment of the input document
     return response.document_sentiment.score
+
+def get_coords(address):
+    address = address.replace(' ', '+')
+    response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + key)
+    resp_json_payload = response.json()
+    return str(resp_json_payload['results'][0]['geometry']['location']['lat']) + ',' + str(resp_json_payload['results'][0]['geometry']['location']['lng'])
