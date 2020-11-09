@@ -82,7 +82,6 @@ def eat():
                 result= simplejson.load(urllib.request.urlopen(url))
                 d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
                 posts_parsed.append(d)
-
         # sort restaurants by distance to loc
         posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
 
