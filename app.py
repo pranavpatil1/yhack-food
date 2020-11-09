@@ -149,15 +149,31 @@ def chef():
         genre = request.form['genre'] 
         des = request.form['desc']
         full_add = request.form['street'] + ", " + request.form['city'] + ", " + request.form['state'] + ", " + request.form['zip'] + ", USA"
-
-        if not name or not phone:
-            flash('Title is required!')
+        
+        url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + urllib.parse.quote(full_add, safe='') + "&inputtype=textquery&fields=name,geometry&key=AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA"
+        result= simplejson.load(urllib.request.urlopen(url))
+        
+        if len(result['candidates']) == 0:
+            if not name or not phone:
+                flash('Title is required!')
+            else:
+                conn = get_db_connection()
+                conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                             (name, phone, menu, tags, genre, des, full_add))
+                conn.close()
+                return redirect(url_for('eat'))
         else:
-            conn = get_db_connection()
-            conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-                         (name, phone, menu, tags, genre, des, full_add))
-            conn.close()
-            return redirect(url_for('eat'))
+            coord = str(result['candidates'][0]['geometry']['location']['lat']) + ", " + str(result['candidates'][0]['geometry']['location']['lng'])
+            print (coord)
+
+            if not name or not phone:
+                flash('Title is required!')
+            else:
+                conn = get_db_connection()
+                conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add, address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                             (name, phone, menu, tags, genre, des, full_add, coord))
+                conn.close()
+                return redirect(url_for('eat'))
     return render_template('chef.html')
 
 def sample_analyze_sentiment(text_content):
