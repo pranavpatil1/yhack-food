@@ -1,9 +1,83 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA&callback=initMap&libraries=places&v=weekly"
+      defer
+    ></script>
+    <style type="text/css">
+      #map {
+        height: 100%;
+      }
+    </style>
+    <script>
+      // This example requires the Places library. Include the libraries=places
+      // parameter when you first load the API. For example:
+      // 
+      let map;
+      let service;
+      let infowindow;
+
+      function initMap() {
+        const loc = document.getElementById("loc").innerHTML;
+        console.log(loc);
+        const sydney = new google.maps.LatLng(-33.867, 151.195);
+        infowindow = new google.maps.InfoWindow();
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: sydney,
+          zoom: 15,
+        });
+        const request = {
+          query: loc,
+          fields: ["name", "geometry"],
+        };
+        service = new google.maps.places.PlacesService(map);
+        service.findPlaceFromQuery(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK) {
+            for (let i = 0; i < results.length; i++) {
+              createMarker(results[i]);
+            }
+            console.log(results[0].geometry.location);
+            map.setCenter(results[0].geometry.location);
+          }
+        });
+      }
+
+      function createMarker(place) {
+        const marker = new google.maps.Marker({
+          map,
+          position: place.geometry.location,
+        });
+        google.maps.event.addListener(marker, "click", () => {
+          infowindow.setContent(place.name);
+          infowindow.open(map);
+        });
+      }
+    </script>
 <br>
     <h2 class="restTitle">{% block title %} Explore chefs in your area! {% endblock %}</h2>
     <br>
+<form method="post">
+    <div class="form-group">
+        <label for="loc">Enter your address to find places closest to you!</label>
+        <input name="loc" type="text" placeholder="Address"
+                  class="form-control"></textarea>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+
+
+{% if loc  %}
+	    
+<div style="width: 100%; height: 500px">
+<div id="map"></div>
+</div>
+<span id="loc" style="visibility:hidden">{{loc}}</span>
+{% endif %}
+
+<br>
     {% for post in posts %}
     <div class="flex-rest-full">
         <a href="{{ url_for('restaurant', post_id=post['id']) }}">

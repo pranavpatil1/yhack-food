@@ -4,6 +4,7 @@ import sqlalchemy
 import urllib
 from google.cloud import language_v1
 import os
+import re
 
 app = Flask(__name__)
 
@@ -49,8 +50,26 @@ def get_post(post_id):
 def index():
     return render_template('index.html')
 
-@app.route('/eat/')
+@app.route('/eat/', methods=('GET', 'POST'))
 def eat():
+    if request.method == 'POST':
+        loc = request.form['loc']
+        conn = get_db_connection()
+        posts = conn.execute('SELECT * FROM rest').fetchall()
+        conn.close()
+        posts_parsed = []
+        for row in posts:
+            d = dict(row.items())
+            d['id'] = urllib.parse.quote(d['name'], safe='')
+            d['menu'] = ". ".join(d['menu'][:40].split(";")[:-1])
+            d['phone'] = formatPhone(str(d['phone']))
+            d['tags'] = d['tags'].split(", ")
+            
+            # if address starts with a numbers then comma, don't include that part
+            pattern = re.compile("^([0-9]+),")
+            d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
+            posts_parsed.append(d)
+        return render_template('eat.html', posts=posts_parsed, loc=loc)
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest').fetchall()
     conn.close()
@@ -61,9 +80,12 @@ def eat():
         d['menu'] = ". ".join(d['menu'][:40].split(";")[:-1])
         d['phone'] = formatPhone(str(d['phone']))
         d['tags'] = d['tags'].split(", ")
-        d['full_add'] = ", ".join(d['full_add'].split(", ")[:3])
+        
+        # if address starts with a numbers then comma, don't include that part
+        pattern = re.compile("^([0-9]+),")
+        d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
         posts_parsed.append(d)
-    return render_template('eat.html', posts=posts_parsed)
+    return render_template('eat.html', posts=posts_parsed, loc=None)
 
 @app.route('/restaurant/<post_id>', methods=('GET', 'POST'))
 def restaurant(post_id):
