@@ -20,19 +20,28 @@ def get_db_connection():
     conn = engine.connect()
     return conn
 
+def formatPhone(phone):
+    phone = phone[0:3] + "-" + phone[3:6] + "-" + phone[6:]
+    return phone
+
 def get_post(post_id):
     conn = get_db_connection()
     id = urllib.parse.unquote(post_id)
     query = "SELECT * FROM rest WHERE name = %s"
     post = conn.execute(query, (id,)).fetchone()
+    query = "SELECT comment FROM comments WHERE restaurant = %s"
+    comments = conn.execute(query, (id,)).fetchall()
+    comment_list = []
+    if comments:
+        for comment in comments:
+            comment_list.append(dict(comment.items())['comment'])
+    post_dict = dict(post.items())
+    post_dict['comments'] = comment_list
+    post_dict['phone'] = formatPhone(str(post_dict['phone']))
     conn.close()
     if post is None:
         abort(404)
-    return post
-
-def formatPhone(phone):
-    phone = phone[0:3] + "-" + phone[3:6] + "-" + phone[6:]
-    return phone
+    return post_dict
 
 @app.route('/')
 def index():
@@ -54,8 +63,21 @@ def eat():
         posts_parsed.append(d)
     return render_template('eat.html', posts=posts_parsed)
 
-@app.route('/restaurant/<post_id>')
+@app.route('/restaurant/<post_id>', methods=('GET', 'POST'))
 def restaurant(post_id):
+    if request.method == 'POST':
+        comment = request.form['comment']
+
+        if not comment:
+            flash('comment is required!')
+        else:
+            conn = get_db_connection()
+            print (urllib.parse.unquote(post_id), comment)
+            conn.execute('INSERT INTO comments (restaurant, comment) VALUES (%s, %s)',
+                         (urllib.parse.unquote(post_id), comment))  
+            conn.close()
+            return redirect(url_for('restaurant', post_id=post_id))
+    
     post = get_post(post_id)
     menu_items = post['menu'].split(";")
     for i in range(len(menu_items)):

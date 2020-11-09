@@ -19,7 +19,8 @@
       <div class="container">
         <div class="navbar-brand-wrapper d-flex w-100" style="float: left">
           <a href="/">
-            <h1 id="menuTitle">🍉 Watermelon</h1>
+            <img src="{{ url_for('static', filename= 'images/potluck.png') }}" style="height:40px; width: auto; float: left;">
+            <h1 id="menuTitle" style="margin-left: 10px; float:right">Potluck</h1>
           </a>
           <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="mdi mdi-menu navbar-toggler-icon"></span>
@@ -34,13 +35,14 @@
               <a class="nav-link menuLink" href="/eat">Eat</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link menuLink" href="/cook">Cook</a>
+              <a class="nav-link menuLink" href="/chef">Cook</a>
             </li>
           </ul>
         </div>
       </div>
       </div>
     </header>
+<br>
     <div class="container">
         {% block content %} {% endblock %}
     </div>

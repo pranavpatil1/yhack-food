@@ -1,14 +1,33 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1 style="color:red;">{% block title %} {{ post['name'] }} {% endblock %}</h1>
+    <h1 style="color:#5C913B;">{% block title %} {{ post['name'] }} {% endblock %}</h1>
         <h3>About Us!</h3>
         <p>{{ post['des'] }}</p>
         <h3>Order Now at:</h3>
         <p>{{ post['phone'] }}</p>
         <h3>Our Menu:</h3>
         {% for item in menu %}
+          <span style="background-color: #5C913B; color: white; padding: 3px; border-radius: 3px; margin: 5px 5px;">
             <b>{{ item }}</b>
-            <hr>
+        </span>
+            <br>
+            <br>
         {% endfor %}
+        <h3>Comments</h3>
+<form method="post">
+    <div class="form-group">
+        <label for="comment">Post a comment</label>
+        <textarea name="comment" placeholder="Describe your experience"
+                  class="form-control"></textarea>
+        <button type="submit" class="btn btn-primary">Post</button>
+    </div>
+</form>
+
+	    {% if post['comments']  %}
+		    {% for item in post['comments'] %}
+		        {{ item }}
+		        <hr>
+		    {% endfor %}
+	    {% endif %}
 {% endblock %}
