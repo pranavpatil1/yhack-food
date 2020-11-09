@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, url_for, flash, redirect
 from werkzeug.exceptions import abort
 import sqlalchemy
 import urllib
+from google.cloud import language_v1
+import os
 
 app = Flask(__name__)
 
@@ -74,7 +76,20 @@ def restaurant(post_id):
             conn = get_db_connection()
             print (urllib.parse.unquote(post_id), comment)
             conn.execute('INSERT INTO comments (restaurant, comment) VALUES (%s, %s)',
-                         (urllib.parse.unquote(post_id), comment))  
+                         (urllib.parse.unquote(post_id), comment))
+            
+            # compute sentiment score for restaurant
+            rest_name = urllib.parse.unquote(post_id)
+            sent_score = sample_analyze_sentiment(comment)
+            query = "SELECT score FROM rest WHERE name = %s"
+            old_score = conn.execute(query, (rest_name,)).fetchone()[0]
+            query = "SELECT num_comments FROM rest WHERE name = %s"
+            old_num = conn.execute(query, (rest_name,)).fetchone()[0]
+            print(old_num, old_score, sent_score)
+
+            query = "UPDATE rest SET score = " + str((sent_score + old_score * old_num)/old_num) + ", num_comments = " + str(old_num + 1) + " WHERE name = %s"
+            conn.execute(query, (rest_name,))
+
             conn.close()
             return redirect(url_for('restaurant', post_id=post_id))
     
@@ -105,3 +120,32 @@ def chef():
             conn.close()
             return redirect(url_for('eat'))
     return render_template('chef.html')
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="yhack-d85d8882337a.json"
+def sample_analyze_sentiment(text_content):
+    """
+    Analyzing Sentiment in a String
+
+    Args:
+      text_content The text content to analyze
+    """
+
+    client = language_v1.LanguageServiceClient()
+
+    # text_content = 'I am so happy and joyful.'
+
+    # Available types: PLAIN_TEXT, HTML
+    type_ = language_v1.Document.Type.PLAIN_TEXT
+
+    # Optional. If not specified, the language is automatically detected.
+    # For list of supported languages:
+    # https://cloud.google.com/natural-language/docs/languages
+    language = "en"
+    document = {"content": text_content, "type_": type_, "language": language}
+
+    # Available values: NONE, UTF8, UTF16, UTF32
+    encoding_type = language_v1.EncodingType.UTF8
+
+    response = client.analyze_sentiment(request = {'document': document, 'encoding_type': encoding_type})
+    # Get overall sentiment of the input document
+    return response.document_sentiment.score
