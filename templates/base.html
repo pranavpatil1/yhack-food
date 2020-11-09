@@ -10,15 +10,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/mdi/css/materialdesignicons.min.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename= 'vendors/aos/css/aos.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
     <title>{% block title %} {% endblock %}</title>
   </head>
   <body>
     <header id="header-section">
-      <div class="nav-head navbar-expand-lg pl-3 pl-sm-0" id="navbar" style="padding: 20px 0 20px; background-color: #f9f9f9">
+      <div class="nav-head navbar-expand-lg pl-3 pl-sm-0" id="navbar" style="padding: 20px 0 20px; background-color: #DD2E44">
       <div class="container">
         <div class="navbar-brand-wrapper d-flex w-100" style="float: left">
           <a href="/">
-            <h1>🍉 Watermelon</h1>
+            <h1 id="menuTitle">🍉 Watermelon</h1>
           </a>
           <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="mdi mdi-menu navbar-toggler-icon"></span>
@@ -27,13 +28,13 @@
         <div class="collapse navbar-collapse navbar-menu-wrapper" id="navbarSupportedContent">
           <ul class="navbar-nav align-items-lg-center align-items-start ml-auto">
             <li class="nav-item">
-              <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+              <a class="nav-link menuLink" href="/">Home <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/eat">Eat</a>
+              <a class="nav-link menuLink" href="/eat">Eat</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/cook">Cook</a>
+              <a class="nav-link menuLink" href="/cook">Cook</a>
             </li>
           </ul>
         </div>

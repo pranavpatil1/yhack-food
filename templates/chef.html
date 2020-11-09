@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br>
+
+
+<!--
+
+Name (string)
+Menu (string -> float)
+Genre (dropdown -> none, sushi, Chinese, Mexican, )
+Phone (strip non-numbers away and make into int)
+Des (string)
+Tags (array str, max 5)
+full_add ([Street #, Street name], City, County, State, Zip Code, Country)
+address = coords
+
+ -->
+<div class="container" style="width: 600px">
+<h1>{% block title %} Create a Restaurant Listing {% endblock %}</h1>
+<form method="post">
+    <div class="form-group">
+        <label for="title">Name</label>
+        <input type="text" name="name"
+               placeholder="Name or service title" class="form-control"
+               value="{{ request.form['name'] }}"></input>
+    </div>
+    <div class="dropdown">
+        <label for="genre">Food style</label>
+      <select class="form-control" name="genre" value="{{ request.form['genre'] }}">
+        <option value="none">None</option>
+        <option value="Chinese">Chinese</option>
+        <option value="Mexican">Mexican</option>
+        <option value="Thai">Thai</option>
+        <option value="Vietnamise">Vietnamise</option>
+    </select>
+  </div>
+    <div class="form-group">
+        <label for="food">Menu Item</label>
+        <input type="text" name="food"
+               placeholder="Food" class="form-control"
+               value="{{ request.form['food'] }}"
+               id="foodName"></input>
+        <input type="number" name="price"
+               placeholder="Price" class="form-control"
+               value="{{ request.form['price'] }}"  step="0.01"
+               id="foodPrice"></input>
+        <button id="addMenuItemButton" type="button" class="btn btn-secondary" onclick="onMenuItemClick()">Add</button>
+    </div>
+
+    <div id="menuList" class="flex-restaurant" style="justify-content: flex-start">
+      </div>
+    <div class="form-group">
+ <label for="phone">Phone</label>
+    <input type="number" name="phone"
+           min="1000000000" max="10000000000"
+           placeholder="Name or service title" class="form-control"
+           value="{{ request.form['phone'] }}"></input>
+        <label for="content">Description</label>
+        <textarea name="desc" placeholder="Any important details"
+                  class="form-control">{{ request.form['desc'] }}</textarea>
+    </div>
+    <div class="form-group">
+ <label for="street">Address</label>
+    <input type="text" name="street"
+           placeholder="Street Number and Name" class="form-control"
+           value="{{ request.form['street'] }}"></input>
+    <input type="text" name="city"
+           placeholder="City" class="form-control"
+           value="{{ request.form['city'] }}"></input>
+    <input type="text" name="state"
+           placeholder="State" class="form-control"
+           value="{{ request.form['state'] }}"></input>
+    <input type="number" name="zip"
+           placeholder="Zip Code" class="form-control"
+           value="{{ request.form['zip'] }}"></input>
+    </div>
+    <div class="form-group">
+        <label for="tag">Tags</label>
+        <input id="newTag" type="text" name="tag"
+               placeholder="delivery" class="form-control"
+               value="{{ request.form['tag'] }}"></input>
+        <button id="addTagButton" type="button" class="btn btn-secondary" onclick="onTagClick()">Add</button>
+    </div>
+    <div id="tagList" class="flex-restaurant" style="justify-content: flex-start">
+      </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+
+    <input id="menuItems" name="menuItems"
+        style="visibility: hidden;"></input>
+    <input id="tags" name="tags"
+        style="visibility: hidden;"></input>
+
+</form>
+</div>
+
+<script>
+
+var tags = [];
+var menuItems = [];
+
+function onMenuItemClick() {
+    var food = document.getElementById("foodName").value;
+    var price = document.getElementById("foodPrice").value;
+    document.getElementById("foodName").value = "";
+    document.getElementById("foodPrice").value = "";
+    var menuItem = food + ":" + price;
+    menuItems.push(menuItem);
+    var node = document.createElement("SPAN");               // Create a <span> node
+    var textnode = document.createTextNode(menuItem);         // Create a text node
+    node.appendChild(textnode);                              // Append the text to <li>
+    node.style = "background-color: black";
+    document.getElementById("menuList").appendChild(node);
+    document.getElementById("menuItems").value = menuItems.join(";");
+    console.log(document.getElementById("menuItems").value);
+}
+function onTagClick() {
+    var tag = document.getElementById("newTag").value;
+    document.getElementById("newTag").value = "";
+    tags.push(tag);
+    var node = document.createElement("SPAN");               // Create a <span> node
+    var textnode = document.createTextNode(tag);         // Create a text node
+    node.appendChild(textnode);                              // Append the text to <li>
+    node.style = "background-color: #5C913B";
+    document.getElementById("tagList").appendChild(node);
+    document.getElementById("tags").value = tags.join(", ");
+    console.log(document.getElementById("tags").value);
+}
+
+  </script>
+
+{% endblock %}

@@ -1,12 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Welcome to big tasty eateries! {% endblock %}</h1>
+<br>
+    <h2 class="restTitle">{% block title %} Welcome to big tasty eateries! {% endblock %}</h2>
+    <br>
     {% for post in posts %}
+    <div class="flex-rest-full">
         <a href="{{ url_for('restaurant', post_id=post['id']) }}">
-            <h2>{{ post['name'] }}</h2>
+            <h3>{{ post['name'] }}</h3>
         </a>
-        <span class="badge badge-primary">{{ post['menu'] }}</span>
-        <hr>
-    {% endfor %}
+
+    <div>
+            <span style="">
+              {{ post['full_add'] }}
+            </span>
+    <div class="flex-restaurant">
+        {% if post['genre'] != "none" %}
+            <span style="background-color: #DD2E44">
+              {{ post['genre'] }}
+            </span>
+        {% endif %}
+        <span style="">
+          {{ post['phone'] }}
+        </span>
+        {% for tag in post['tags'] %}
+          <span style="background-color: #5C913B">
+            {{ tag }}
+          </span>
+        {% endfor %}
+</div>
+</div>
+    </div>
+        {% endfor %}
+    <hr>
+
 {% endblock %}
