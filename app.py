@@ -7,6 +7,10 @@ import simplejson, urllib, requests, geocoder
 import os
 import re
 
+import ssl
+
+context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+context.load_cert_chain('ssl.crt', keyfile='ssl.key')
 
 app = Flask(__name__)
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="yhack-d85d8882337a.json"
@@ -213,3 +217,6 @@ def get_coords(address):
     response = requests.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + key)
     resp_json_payload = response.json()
     return str(resp_json_payload['results'][0]['geometry']['location']['lat']) + ',' + str(resp_json_payload['results'][0]['geometry']['location']['lng'])
+    
+if __name__ == '__main__':  
+     app.run(host='127.0.0.1', debug=True, ssl_context=context)
