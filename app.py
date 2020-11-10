@@ -81,11 +81,15 @@ def eat():
                 url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + loc_coords + "&destinations=" + d['address'] + "&mode=driving&language=en-EN&sensor=false&key=" + key
                 result= simplejson.load(urllib.request.urlopen(url))
                 d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
+                d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
+                
                 posts_parsed.append(d)
         # sort restaurants by distance to loc
         posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
+        coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
+        print (coords)
 
-        return render_template('eat.html', posts=posts_parsed, loc=loc)
+        return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest').fetchall()
     conn.close()
@@ -149,15 +153,31 @@ def chef():
         genre = request.form['genre'] 
         des = request.form['desc']
         full_add = request.form['street'] + ", " + request.form['city'] + ", " + request.form['state'] + ", " + request.form['zip'] + ", USA"
-
-        if not name or not phone:
-            flash('Title is required!')
+        
+        url = "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?input=" + urllib.parse.quote(full_add, safe='') + "&inputtype=textquery&fields=name,geometry&key=AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA"
+        result= simplejson.load(urllib.request.urlopen(url))
+        
+        if len(result['candidates']) == 0:
+            if not name or not phone:
+                flash('Title is required!')
+            else:
+                conn = get_db_connection()
+                conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add) VALUES (%s, %s, %s, %s, %s, %s, %s)',
+                             (name, phone, menu, tags, genre, des, full_add))
+                conn.close()
+                return redirect(url_for('eat'))
         else:
-            conn = get_db_connection()
-            conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add) VALUES (%s, %s, %s, %s, %s, %s, %s)',
-                         (name, phone, menu, tags, genre, des, full_add))
-            conn.close()
-            return redirect(url_for('eat'))
+            coord = str(result['candidates'][0]['geometry']['location']['lat']) + ", " + str(result['candidates'][0]['geometry']['location']['lng'])
+            print (coord)
+
+            if not name or not phone:
+                flash('Title is required!')
+            else:
+                conn = get_db_connection()
+                conn.execute('INSERT INTO rest (name, phone, menu, tags, genre, des, full_add, address) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                             (name, phone, menu, tags, genre, des, full_add, coord))
+                conn.close()
+                return redirect(url_for('eat'))
     return render_template('chef.html')
 
 def sample_analyze_sentiment(text_content):

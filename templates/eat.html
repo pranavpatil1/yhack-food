@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if loc  %}
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
       src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBuDA0lf_rl4dNalt0yyABWUWlYxsgKqeA&callback=initMap&libraries=places&v=weekly"
@@ -22,7 +23,7 @@
 
       function initMap() {
         const loc = document.getElementById("loc").innerHTML;
-        console.log(loc);
+        const coords = "{{coords}}".split(";");
         const sydney = new google.maps.LatLng(-33.867, 151.195);
         infowindow = new google.maps.InfoWindow();
         map = new google.maps.Map(document.getElementById("map"), {
@@ -39,10 +40,25 @@
             for (let i = 0; i < results.length; i++) {
               createMarker(results[i]);
             }
-            console.log(results[0].geometry.location);
             map.setCenter(results[0].geometry.location);
           }
         });
+        
+        //var bounds = new google.maps.LatLngBounds();
+        for (let i = 0; i < coords.length; i ++) {
+            let name = coords[i].split(":")[0];
+            let lat = parseFloat(coords[i].split(":")[1].split(",")[0]);
+            let lng = parseFloat(coords[i].split(":")[1].split(",")[1]);
+            const marker = new google.maps.Marker({
+              map,
+              position: { lat: lat, lng: lng },
+            });
+            google.maps.event.addListener(marker, "click", () => {
+                window.location.replace("/restaurant/"+name);
+            });
+            //bounds.extend(marker); 
+        }
+        //map.fitBounds(bounds);
       }
 
       function createMarker(place) {
@@ -56,6 +72,7 @@
         });
       }
     </script>
+{% endif %}
 <br>
     <h2 class="restTitle">{% block title %} Explore chefs in your area! {% endblock %}</h2>
     <br>
@@ -75,6 +92,7 @@
 <div id="map"></div>
 </div>
 <span id="loc" style="visibility:hidden">{{loc}}</span>
+
 {% endif %}
 
 <br>
@@ -84,11 +102,16 @@
             <h3>{{ post['name'] }}</h3>
         </a>
 
-    <div>
+    <div style="display: flex; flex-direction: column; align-items: flex-end;">
             <span style="">
               {{ post['full_add'] }}
             </span>
     <div class="flex-restaurant">
+        {% if post['dist_display']%}
+            <span style="background-color: #5C913B">
+              {{ post['dist_display'] }}
+            </span>
+        {% endif %}
         {% if post['genre'] != "none" %}
             <span style="background-color: #DD2E44">
               {{ post['genre'] }}
@@ -102,6 +125,21 @@
             {{ tag }}
           </span>
         {% endfor %}
+        {% if post['score'] %}
+            {% if post['score'] > 0.1 %}
+                <span style="background-color: #5C913B">
+                  :)
+                </span>
+            {% elif post['score'] < 0 %}
+                <span style="background-color: #DD2E44">
+                  :(
+                </span>
+            {% else %}
+                <span style="background-color: black">
+                  :|
+                </span>
+            {% endif %}
+        {% endif %}
 </div>
 </div>
     </div>
