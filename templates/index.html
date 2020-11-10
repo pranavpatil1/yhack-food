@@ -4,8 +4,9 @@
 
   <div class="banner" >
     <div class="container content-header">
+      <br></br>
       <h1 class="font-weight-semibold">{% block title %} Hungry? {% endblock %}<br></h1>
-      <h5 class="section-subtitle text-muted">Watermelon helps pair people who want quality food at a lower price with chefs<br> who need work but don't have the money to setup shop.</h5>
+      <h5 class="section-subtitle text-muted">Potluck helps pair people who want quality food at a lower price with chefs<br> who need work but don't have the bandwith to setup shop.</h5>
       <div>
         <button class="btn btn-opacity-light mr-1">I'm a chef</button>
         <button class="btn btn-opacity-success ml-1">I'm hungry</button>
@@ -17,32 +18,29 @@
     <div class="container">
       <section class="features-overview" id="features-section" >
         <div class="content-header">
-          <h2>How does it work</h2>
+          <h2>How it works</h2>
           <h6 class="section-subtitle text-muted">Chefs tell us what types of food they make and the<br>pricing, and then you can find the chefs closest to you!</h6>
         </div>
         <div class="d-md-flex justify-content-between">
           <div class="grid-margin d-flex justify-content-start">
             <div class="features-width">
-              <img src="{{ url_for('static', filename= 'images/Group12.svg') }}" alt="" class="img-icons">
-              <h5 class="py-3">Speed<br>Optimisation</h5>
-              <p class="text-muted">Lorem ipsum dolor sit amet, tincidunt vestibulum. Fusce egeabus consectetuer turpis, suspendisse.</p>
-              <a href="#"><p class="readmore-link">Readmore</p></a>
+              <img src="{{ url_for('static', filename= 'images/chef_c.png') }}" alt="" class="img-icons">
+              <h5 class="py-3">Establish<br>Eateries</h5>
+              <p class="text-muted">Chefs input their information, food, and prices, and we store this information in a secure, encrypted database.</p>
             </div>
           </div>
           <div class="grid-margin d-flex justify-content-center">
             <div class="features-width">
-              <img src="{{ url_for('static', filename= 'images/Group7.svg') }}" alt="" class="img-icons">
-              <h5 class="py-3">SEO and<br>Backlinks</h5>
-              <p class="text-muted">Lorem ipsum dolor sit amet, tincidunt vestibulum. Fusce egeabus consectetuer turpis, suspendisse.</p>
-              <a href="#"><p class="readmore-link">Readmore</p></a>
+              <img src="{{ url_for('static', filename= 'images/burger.png') }}" alt="" class="img-icons">
+              <h5 class="py-3">Find The<br>Best Food</h5>
+              <p class="text-muted">Using Natural Language Processing and Driving Distance Algorithms, we hand-select the best chefs nearby, no matter what genre you prefer.</p>
             </div>
           </div>
           <div class="grid-margin d-flex justify-content-end">
             <div class="features-width">
-              <img src="{{ url_for('static', filename= 'images/Group5.svg') }}" alt="" class="img-icons">
-              <h5 class="py-3">Content<br>Marketing</h5>
-              <p class="text-muted">Lorem ipsum dolor sit amet, tincidunt vestibulum. Fusce egeabus consectetuer turpis, suspendisse.</p>
-              <a href="#"><p class="readmore-link">Readmore</p></a>
+              <img src="{{ url_for('static', filename= 'images/comm.png') }}" alt="" class="img-icons">
+              <h5 class="py-3">Build your<br>Community</h5>
+              <p class="text-muted">Connect instantly with local chefs, leave your feedback, creating a tight-knit community inspired by good food.</p>
             </div>
           </div>
         </div>
