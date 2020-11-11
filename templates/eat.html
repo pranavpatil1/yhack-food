@@ -38,7 +38,7 @@
         service.findPlaceFromQuery(request, (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (let i = 0; i < results.length; i++) {
-              createMarker(results[i]);
+              // createMarker(results[i]);
             }
             map.setCenter(results[0].geometry.location);
           }
@@ -52,6 +52,12 @@
             const marker = new google.maps.Marker({
               map,
               position: { lat: lat, lng: lng },
+              animation: google.maps.Animation.DROP,
+              label: {
+                text: (i+1).toString(),
+                color: "white",
+                fontFamily: "Poppins"
+              }
             });
             google.maps.event.addListener(marker, "click", () => {
                 window.location.replace("/restaurant/"+name);

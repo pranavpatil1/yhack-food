@@ -110,7 +110,10 @@ def eat():
             posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
             genre_posts = sorted(genre_posts, key=lambda k: k['dist']) 
             coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
+           
         posts_parsed = genre_posts + posts_parsed
+        for i in range(len(posts_parsed)):
+            posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
         
         return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
     
@@ -129,6 +132,9 @@ def eat():
         pattern = re.compile("^([0-9]+),")
         d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
         posts_parsed.append(d)
+    
+    for i in range(len(posts_parsed)):
+        posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
     return render_template('eat.html', posts=posts_parsed, loc=None)
 
 @app.route('/restaurant/<post_id>', methods=('GET', 'POST'))
@@ -239,3 +245,4 @@ def get_coords(address):
     
 if __name__ == '__main__':  
      app.run(host='127.0.0.1', debug=True, ssl_context=context)
+     
