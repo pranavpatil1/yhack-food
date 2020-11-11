@@ -6,7 +6,7 @@ from google.cloud import language_v1
 import simplejson, urllib, requests, geocoder
 import os
 import re
-
+import nltk
 import ssl
 
 context = ssl.SSLContext(ssl.PROTOCOL_TLS)
@@ -67,7 +67,11 @@ def eat():
         posts = conn.execute('SELECT * FROM rest').fetchall()
         conn.close()
         posts_parsed = []
+        genre_posts = []
         loc_coords = get_coords(loc)
+
+        genre = request.form['query']
+        # genre = 'Chinese'
         for row in posts:
             d = dict(row.items())
             d['id'] = urllib.parse.quote(d['name'], safe='')
@@ -87,11 +91,19 @@ def eat():
                 d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
                 d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
                 
-                posts_parsed.append(d)
+                genre_sim = nltk.edit_distance(genre, d['genre'])
+                print(genre_sim)
+                if genre_sim < 2:
+                    genre_posts.append(d)
+                    print(d['genre'])
+                else:
+                    posts_parsed.append(d)
         # sort restaurants by distance to loc
         posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
+        genre_posts = sorted(genre_posts, key=lambda k: k['dist']) 
+        posts_parsed = genre_posts + posts_parsed
         coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
-        print (coords)
+        # print (coords)
 
         return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
     conn = get_db_connection()
@@ -109,7 +121,6 @@ def eat():
         pattern = re.compile("^([0-9]+),")
         d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
         posts_parsed.append(d)
-    
     return render_template('eat.html', posts=posts_parsed, loc=None)
 
 @app.route('/restaurant/<post_id>', methods=('GET', 'POST'))
