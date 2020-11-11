@@ -66,7 +66,7 @@ def eat():
         genre_posts = []
         
         loc = request.form['loc']
-        genre = request.form['query']
+        query = request.form['query']
         
         conn = get_db_connection()
         posts = conn.execute('SELECT * FROM rest').fetchall()
@@ -83,9 +83,9 @@ def eat():
             d['phone'] = formatPhone(str(d['phone']))
             d['tags'] = d['tags'].split(", ")
             
-            # if address starts with a numbers then comma, don't include that part
-            pattern = re.compile("^([0-9]+),")
             if d['address'] != None:
+                # if address starts with a numbers then comma, don't include that part
+                pattern = re.compile("^([0-9]+),")
                 d['address'] = d['address'].replace(' ', '')
                 d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
 
@@ -95,23 +95,29 @@ def eat():
                     d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
                     d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
                 
-                genre_arr = False
-                if genre:
-                    genre_sim = nltk.edit_distance(genre, d['genre'])
-                    if genre_sim <= 2:
-                        genre_posts.append(d)
-                        genre_arr = True
-                if not genre_arr:
-                    posts_parsed.append(d)
+            # create some heuristic based on number of search queries matched
+            d['heur'] = len(query.split(" "))
+            
+            if query:
+                # only keep letters, split by space
+                queries = (" ".join(re.split("[^a-zA-Z ]*", query))).split(" ")
+                searchable = d['name'] + " " + " ".join(d['tags']) + " " + d['genre'] + " " + d['menu'] + " " + d['des']
+                searchable = searchable.lower()
+                for q in queries:
+                    if q.lower() in searchable:
+                        d['heur'] -= 1
+            
+            posts_parsed.append(d)
         
         # sort restaurants by distance to loc
         coords = None
         if loc_coords:
-            posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
-            genre_posts = sorted(genre_posts, key=lambda k: k['dist']) 
+            posts_parsed = sorted(posts_parsed, key=lambda k: (k['heur'], k['dist'])) 
             coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
-           
-        posts_parsed = genre_posts + posts_parsed
+        
+        if query:
+            posts_parsed = sorted(posts_parsed, key=lambda k: k['heur'])
+        
         for i in range(len(posts_parsed)):
             posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
         
