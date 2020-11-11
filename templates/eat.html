@@ -24,10 +24,10 @@
       function initMap() {
         const loc = document.getElementById("loc").innerHTML;
         const coords = "{{coords}}".split(";");
-        const sydney = new google.maps.LatLng(-33.867, 151.195);
+        const caltech = new google.maps.LatLng(34.138510, -118.125312);
         infowindow = new google.maps.InfoWindow();
         map = new google.maps.Map(document.getElementById("map"), {
-          center: sydney,
+          center: caltech,
           zoom: 15,
         });
         const request = {
@@ -38,13 +38,13 @@
         service.findPlaceFromQuery(request, (results, status) => {
           if (status === google.maps.places.PlacesServiceStatus.OK) {
             for (let i = 0; i < results.length; i++) {
-              createMarker(results[i]);
+              // createMarker(results[i]);
             }
             map.setCenter(results[0].geometry.location);
           }
         });
         
-        //var bounds = new google.maps.LatLngBounds();
+        var bounds = new google.maps.LatLngBounds();
         for (let i = 0; i < coords.length; i ++) {
             let name = coords[i].split(":")[0];
             let lat = parseFloat(coords[i].split(":")[1].split(",")[0]);
@@ -52,13 +52,19 @@
             const marker = new google.maps.Marker({
               map,
               position: { lat: lat, lng: lng },
+              animation: google.maps.Animation.DROP,
+              label: {
+                text: (i+1).toString(),
+                color: "white",
+                fontFamily: "Poppins"
+              }
             });
             google.maps.event.addListener(marker, "click", () => {
                 window.location.replace("/restaurant/"+name);
             });
-            //bounds.extend(marker); 
+            bounds.extend(marker.getPosition()); 
         }
-        //map.fitBounds(bounds);
+        map.fitBounds(bounds);
       }
 
       function createMarker(place) {
@@ -80,7 +86,10 @@
     <div class="form-group">
         <label for="loc">Enter your address to find places closest to you!</label>
         <input name="loc" type="text" placeholder="Address"
-                  class="form-control"></textarea>
+                  class="form-control"></input>
+        <label for="loc">Or, filter by genre</label>
+        <input name="query" type="text" placeholder="Genre"
+                  class="form-control"></input>
         <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
