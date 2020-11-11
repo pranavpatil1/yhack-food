@@ -8,8 +8,8 @@
       <h1 class="font-weight-semibold">{% block title %} Potluck{% endblock %}<br></h1>
       <h5 class="section-subtitle text-muted">Potluck helps pair people who want quality food at a lower price with chefs<br> who need work but don't have the bandwith to setup shop.</h5>
       <div>
-        <button class="btn btn-opacity-light mr-1">I'm a chef</button>
-        <button class="btn btn-opacity-success ml-1">I'm hungry</button>
+        <button class="btn btn-light mr-1">I'm a chef</button>
+        <button class="btn btn-success ml-1">I'm hungry</button>
       </div>
       <img src="{{ url_for('static', filename= 'images/Group171.svg') }}" alt="" class="img-fluid">
     </div>
@@ -144,7 +144,7 @@
             <h4 class="pt-1" data-aos="fade-down"><i>Browse Foods</i></h4>
           </div>
           <div data-aos="fade-up">
-            <button class="btn btn-rounded btn-outline-danger">Go</button>
+            <a class="btn btn-rounded btn-outline-danger" href="/eat">Go</a>
           </div>
         </div>
       </section>

@@ -51,7 +51,7 @@ vertical-align: center;
   --purple: #6f42c1;
   --pink: #e83e8c;
   --red: #dc3545;
-  --orange: #fd7e14;
+  --orange: rgb(221, 46, 68);;
   --yellow: #ffc107;
   --green: #28a745;
   --teal: #20c997;
@@ -2469,14 +2469,14 @@ fieldset:disabled a.btn {
 
 .btn-light {
   color: #212529;
-  background-color: #fc7341;
-  border-color: #fc7341;
+  background-color: rgb(221, 46, 68);;
+  border-color: rgb(221, 46, 68);;
 }
 
 .btn-light:hover {
   color: #fff;
-  background-color: #fb571b;
-  border-color: #fb4e0f;
+  background-color: rgb(221, 46, 68);;
+  border-color: rgb(221, 46, 68);;
 }
 
 .btn-light:focus, .btn-light.focus {
@@ -2492,8 +2492,8 @@ fieldset:disabled a.btn {
 .btn-light:not(:disabled):not(.disabled):active, .btn-light:not(:disabled):not(.disabled).active,
 .show > .btn-light.dropdown-toggle {
   color: #fff;
-  background-color: #fb4e0f;
-  border-color: #f94604;
+  background-color: rgb(221, 46, 68);;
+  border-color: rgb(221, 46, 68);;
 }
 
 .btn-light:not(:disabled):not(.disabled):active:focus, .btn-light:not(:disabled):not(.disabled).active:focus,
