@@ -8,8 +8,8 @@
       <h1 class="font-weight-semibold">{% block title %} Potluck{% endblock %}<br></h1>
       <h5 class="section-subtitle text-muted">Potluck helps pair people who want quality food at a lower price with chefs<br> who need work but don't have the bandwith to setup shop.</h5>
       <div>
-        <button class="btn btn-opacity-light mr-1">I'm a chef</button>
-        <button class="btn btn-opacity-success ml-1">I'm hungry</button>
+        <button class="btn btn-light mr-1">I'm a chef</button>
+        <button class="btn btn-success ml-1">I'm hungry</button>
       </div>
       <img src="{{ url_for('static', filename= 'images/Group171.svg') }}" alt="" class="img-fluid">
     </div>
@@ -24,7 +24,7 @@
         <div class="d-md-flex justify-content-between">
           <div class="grid-margin d-flex justify-content-start">
             <div class="features-width">
-              <img src="{{ url_for('static', filename= 'images/chef_c.png') }}" alt="" class="img-icons">
+              <img src="{{ url_for('static', filename= 'images/chef_c.png') }}" alt="" class="img-icons" style="filter: grayscale(100%);">
               <h5 class="py-3">Establish<br>Eateries</h5>
               <p class="text-muted">Chefs input their information, food, and prices, and we store this information in a secure, encrypted database.</p>
             </div>
@@ -144,7 +144,7 @@
             <h4 class="pt-1" data-aos="fade-down"><i>Browse Foods</i></h4>
           </div>
           <div data-aos="fade-up">
-            <button class="btn btn-rounded btn-outline-danger">Go</button>
+            <a class="btn btn-rounded btn-outline-danger" href="/eat">Go</a>
           </div>
         </div>
       </section>
