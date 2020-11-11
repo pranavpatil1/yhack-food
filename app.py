@@ -62,16 +62,20 @@ def index():
 @app.route('/eat/', methods=('GET', 'POST'))
 def eat():
     if request.method == 'POST':
+        posts_parsed = []
+        genre_posts = []
+        
         loc = request.form['loc']
+        genre = request.form['query']
+        
         conn = get_db_connection()
         posts = conn.execute('SELECT * FROM rest').fetchall()
         conn.close()
-        posts_parsed = []
-        genre_posts = []
-        loc_coords = get_coords(loc)
-
-        genre = request.form['query']
-        # genre = 'Chinese'
+        
+        loc_coords = None
+        if loc:
+            loc_coords = get_coords(loc)
+        
         for row in posts:
             d = dict(row.items())
             d['id'] = urllib.parse.quote(d['name'], safe='')
@@ -85,27 +89,31 @@ def eat():
                 d['address'] = d['address'].replace(' ', '')
                 d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
 
-
-                url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + loc_coords + "&destinations=" + d['address'] + "&mode=driving&language=en-EN&sensor=false&key=" + key
-                result= simplejson.load(urllib.request.urlopen(url))
-                d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
-                d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
+                if loc_coords:
+                    url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=" + loc_coords + "&destinations=" + d['address'] + "&mode=driving&language=en-EN&sensor=false&key=" + key
+                    result= simplejson.load(urllib.request.urlopen(url))
+                    d['dist'] = result['rows'][0]['elements'][0]['duration']['value']/60 # driving time in mins
+                    d['dist_display'] = str(int(d['dist'])) + " min" # driving time in mins
                 
-                genre_sim = nltk.edit_distance(genre, d['genre'])
-                print(genre_sim)
-                if genre_sim < 2:
-                    genre_posts.append(d)
-                    print(d['genre'])
-                else:
+                genre_arr = False
+                if genre:
+                    genre_sim = nltk.edit_distance(genre, d['genre'])
+                    if genre_sim <= 2:
+                        genre_posts.append(d)
+                        genre_arr = True
+                if not genre_arr:
                     posts_parsed.append(d)
+        
         # sort restaurants by distance to loc
-        posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
-        genre_posts = sorted(genre_posts, key=lambda k: k['dist']) 
+        coords = None
+        if loc_coords:
+            posts_parsed = sorted(posts_parsed, key=lambda k: k['dist']) 
+            genre_posts = sorted(genre_posts, key=lambda k: k['dist']) 
+            coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
         posts_parsed = genre_posts + posts_parsed
-        coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
-        # print (coords)
-
+        
         return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
+    
     conn = get_db_connection()
     posts = conn.execute('SELECT * FROM rest').fetchall()
     conn.close()
