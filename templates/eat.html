@@ -52,15 +52,10 @@
             const marker = new google.maps.Marker({
               map,
               position: { lat: lat, lng: lng },
-              animation: google.maps.Animation.DROP,
-              label: {
-                text: (i+1).toString(),
-                color: "white",
-                fontFamily: "Poppins"
-              }
+              label: name.split(".%20")[0]
             });
             google.maps.event.addListener(marker, "click", () => {
-                window.location.replace("/restaurant/"+name);
+                window.location.replace('/restaurant/'+encodeURI(name.split('.%20')[1]));
             });
             bounds.extend(marker.getPosition()); 
         }

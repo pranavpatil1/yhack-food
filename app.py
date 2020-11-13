@@ -48,7 +48,7 @@ def get_post(post_id):
         for comment in comments:
             comment_list.append(dict(comment.items())['comment'])
     post_dict = dict(post.items())
-    post_dict['comments'] = comment_list
+    post_dict['comments'] = comment_list[::-1]
     post_dict['phone'] = formatPhone(str(post_dict['phone']))
     conn.close()
     if post is None:
@@ -78,6 +78,7 @@ def eat():
         
         for row in posts:
             d = dict(row.items())
+            print (d)
             d['id'] = urllib.parse.quote(d['name'], safe='')
             d['menu'] = ". ".join(d['menu'][:40].split(";")[:-1])
             d['phone'] = formatPhone(str(d['phone']))
@@ -112,14 +113,21 @@ def eat():
         # sort restaurants by distance to loc
         coords = None
         if loc_coords:
-            posts_parsed = sorted(posts_parsed, key=lambda k: (k['heur'], k['dist'])) 
-            coords = ";".join(map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],posts_parsed[:10]))
+            posts_parsed = sorted(posts_parsed, key=lambda k: (k['heur'], k['dist'] if 'dist' in k and k['dist'] else 10000000000000))
+            for i in range(len(posts_parsed)):
+                posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
         
-        if query:
+            coords = ";".join(
+                map(lambda k : urllib.parse.quote(k['name'], safe='') + ":" + k['address'],
+                    filter(lambda l : l['address'], posts_parsed[:10]))
+            )
+            print (coords)
+        elif query:
             posts_parsed = sorted(posts_parsed, key=lambda k: k['heur'])
         
-        for i in range(len(posts_parsed)):
-            posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
+        if not loc_coords:
+            for i in range(len(posts_parsed)):
+                posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
         
         return render_template('eat.html', posts=posts_parsed, loc=loc, coords=coords)
     
@@ -133,12 +141,15 @@ def eat():
         d['menu'] = ". ".join(d['menu'][:40].split(";")[:-1])
         d['phone'] = formatPhone(str(d['phone']))
         d['tags'] = d['tags'].split(", ")
+        if 'score' not in d or not d['score']:
+            d['score'] = -1
         
         # if address starts with a numbers then comma, don't include that part
         pattern = re.compile("^([0-9]+),")
         d['full_add'] = ", ".join(d['full_add'].split(", ")[:3] if (not pattern.match(d['full_add'])) else d['full_add'].split(", ")[1:3])
         posts_parsed.append(d)
     
+    posts_parsed = sorted(posts_parsed, key=lambda k: 1-k['score'])
     for i in range(len(posts_parsed)):
         posts_parsed[i]['name'] = str(i + 1) + ". " + posts_parsed[i]['name']
     return render_template('eat.html', posts=posts_parsed, loc=None)
